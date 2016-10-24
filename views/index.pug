@@ -11,9 +11,36 @@ html
 
     .container
       .row
-        each movie in movies
+        each book in [1, 2, 3]
+          .col-xs-12.col-md-3
+            .thumbnail
+              a(href=book.slug)
+                img(src=book.imageURL)
+              h4= book.title
+
+    .container
+      .row
+        each movie in [1, 2, 3]
           .col-xs-12.col-md-3
             .thumbnail
               a(href="movies/" + movie.slug)
                 img(src=movie.imageURL)
               h4= movie.title
+
+    //- .container
+    //-   .row
+    //-     each book in [1, 2, 3]
+    //-       .col-xs-3
+    //-         .text-xs-center
+    //-           img(class="img-fluid" src=media.imageURL)
+    //-         h5.text-xs-center.h2 = media.title
+    //-
+    //-
+    //- .container
+    //-   .row
+    //-     each media in medias
+    //-       .col-xs-12.col-md-3
+    //-         .thumbnail
+    //-           a(href="medias/" + media.movie.slug)
+    //-             img(src=media.movie.imageURL)
+    //-           h4= media.movie.title
