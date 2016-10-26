@@ -1,63 +1,63 @@
 var express = require('express');
 var pug = require('pug');
 var fs = require('fs');
-
 var app = express();
 
-var media = JSON.parse(fs.readFileSync("data.json"));
+var dataMoviesMemory = JSON.parse(fs.readFileSync("data.json").toString())["movies"];
 
-app.use(express.static(__dirname + '/'));
+var dataBooksMemory = JSON.parse(fs.readFileSync("data.json").toString())["books"];
+
+
+function findMovie(slug) {
+  for (var i = 0; i < dataMoviesMemory.length; i++) {
+    if (dataMoviesMemory[i].slug === slug) {
+      return dataMoviesMemory[i];
+    }
+  }
+}
+
+function findBook(slug) {
+  for (var i = 0; i < dataBooksMemory.length; i++) {
+    if (dataBooksMemory[i].slug === slug) {
+      return dataBooksMemory[i];
+    }
+  }
+}
+
+app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(request, response) {
-  console.log('Requesting homepage');
-  response.render('index.pug', { movies: media.movies, books: media.books });
+  response.redirect('/media');
+});
+
+app.get('/media', function(request, response) {
+   console.log('Requesting media');
+   response.send(pug.renderFile(__dirname + '/views/index.pug', { movies: dataMoviesMemory, books: dataBooksMemory }));
+});
+
+app.get('/movies', function(req, res) {
+  console.log('Requesting /movies');
+  res.send(pug.renderFile('views/movies.pug', { movies: dataMoviesMemory }));
+});
+
+app.get('/books', function(req, res) {
+  console.log('Requesting /books');
+  res.send(pug.renderFile('views/books.pug', { books: dataBooksMemory }));
 });
 
 app.get('/movies/*', function(req, res) {
-  var foundMovie = getResource(req.params[0], 'movies');
-
-  res.send('movie.pug', { movie: foundMovie });
+  var foundMovie = findMovie(req.params[0]);
+  console.log(foundMovie);
+  res.send(pug.renderFile('views/movie.pug', { movie: foundMovie }));
 });
 
 app.get('/books/*', function(req, res) {
-  var foundBook = getResource(req.params[0], 'books');
-
-  res.send('book.pug', { movie: foundBook });
+  var foundBook = findBook(req.params[0]);
+  console.log(foundBook);
+  res.send(pug.renderFile('views/book.pug', { book: foundBook }));
 });
 
 
 app.listen(3001, function() {
   console.log('Web server is now running on port 3001');
 });
-
-
-function getResource(slug, resourceName) {
-  var resourceArray = media[resourceName];
-
-  for (var i = 0; i < resourceArray.length; i++) {
-    if (resourceArray[i].slug === slug) {
-      return resourceArray[i];
-    }
-  }
-}
-//
-// app.use(express.static(__dirname + '/'));
-//
-// app.get('/', function(request, response) {
-//   response.redirect('/medias');
-// });
-//
-// app.get('/medias', function(req, res) {
-//   console.log('Requesting /medias');
-//   res.send(pug.renderFile('views/index.pug', { medias: dataInMemory }));
-// });
-//
-// app.get('/medias/*', function(req, res) {
-//   var foundMovie = findMovie(req.params[0]);
-//   console.log(foundMedia);
-//   res.send(pug.renderFile('views/media.pug', { media: foundMedia }));
-// });
-//
-// app.listen(3001, function() {
-//   console.log('Web server is now running on port 3001');
-// });

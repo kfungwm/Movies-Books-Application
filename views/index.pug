@@ -11,16 +11,20 @@ html
 
     .container
       .row
-        each book in [1, 2, 3]
+        h1 Books
+        hr
+        each book in books
           .col-xs-12.col-md-3
             .thumbnail
-              a(href=book.slug)
+              a(href="books/" + book.slug)
                 img(src=book.imageURL)
               h4= book.title
 
     .container
       .row
-        each movie in [1, 2, 3]
+        h1 Movies
+        hr
+        each movie in movies
           .col-xs-12.col-md-3
             .thumbnail
               a(href="movies/" + movie.slug)
